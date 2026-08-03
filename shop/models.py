@@ -53,3 +53,11 @@ class Rating(models.Model):
     def __str__(self):
         return f"{self.user.name} - {self.product.name} - {self.rating}"
 
+    
+class Cart(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    create_at = models.DateTimeField(auto_now_add=True)
+    update_at = models.DateTimeField(auto_now=True)
+
+    def __set__(self):
+        return f"Cart for {self.user.username}"
