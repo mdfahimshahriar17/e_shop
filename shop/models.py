@@ -1,7 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.validators   import MinValueValidator, MaxValueValidator
-# Create your models here.
 
 class Category(models.Model):
     name = models.CharField(max_length=100)
@@ -23,8 +22,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=1)
     available = models.BooleanField(default=True)
-    create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     image = models.ImageField(upload_to='products/%Y/%m/%d')
 
     def __str__(self):
@@ -56,8 +55,8 @@ class Rating(models.Model):
     
 class Cart(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __set__(self):
         return f"Cart for {self.user.username}"
@@ -90,7 +89,7 @@ class Order(models.Model):
         ('canceled', 'Canceled')
     )
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="order")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="orders")
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField()
@@ -101,11 +100,11 @@ class Order(models.Model):
     note = models.TextField()
     paid = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=200, blank=True)
-    create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-            ordering = ['-created']
+        ordering = ['-created_at']
 
     def __str__(self):
         return f"Order #{self.id}"
