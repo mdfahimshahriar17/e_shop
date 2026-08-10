@@ -48,7 +48,7 @@ class Rating(models.Model):
     update_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        unique_togather = ('product', 'user') #product and user has to be unique for this product
+        unique_together = ('product', 'user') #product and user has to be unique for this product
 
     def __str__(self):
         return f"{self.user.name} - {self.product.name} - {self.rating}"
@@ -70,7 +70,7 @@ class Cart(models.Model):
 
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="item")
+    cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="items")
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1)
 
