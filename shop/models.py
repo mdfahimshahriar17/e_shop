@@ -43,14 +43,14 @@ class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     rating = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
     comment = models.TextField()
-    create_at = models.DateTimeField(auto_now_add=True)
-    update_at = models.DateTimeField(auto_now=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         unique_together = ('product', 'user') #product and user has to be unique for this product
 
     def __str__(self):
-        return f"{self.user.name} - {self.product.name} - {self.rating}"
+        return f"{self.user.first_name} - {self.product.name} - {self.rating}"
 
     
 class Cart(models.Model):
