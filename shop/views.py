@@ -11,11 +11,11 @@ def login_view(request):
 
         if user is not None:
             login(request, user)
-            return redirect('')
+            return redirect('shop:register')
         else:
             messages.error(request, 'Invalid username or password')
 
-    return redirect(request, '')
+    return render(request, 'shop/login.html')
 
 def register_view(request):
     if request.method == 'POST':
@@ -24,10 +24,13 @@ def register_view(request):
             user = form.save()
             login(request, user)
             messages.success(request, 'Registration Successful!')
-
+            return redirect('shop:login')
+    else:
+        form = RegistrationForm() 
+    return render(request, 'shop/register.html', {'form': form})
 
 
 
 def logout_view(request):
     logout(request)
-    return redirect('')
+    return redirect('shop:login')
