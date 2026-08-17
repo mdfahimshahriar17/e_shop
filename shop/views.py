@@ -3,6 +3,7 @@ from django.contrib.auth import login, logout, authenticate
 from .models import Category, Product, Cart, CartItem, Rating, Order, OrderItem
 from django.contrib import messages
 from .forms import RegistrationForm
+from django.db.models import Q, Min, Max, Avg
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -34,3 +35,14 @@ def register_view(request):
 def logout_view(request):
     logout(request)
     return redirect('shop:login')
+
+
+def home(request):
+    featured_products = Product.objects.filter(available=True).order_by('-created-at')[:8]
+    categories = Category.objects.all()
+
+    return render(request, '', {
+        'featured_products': featured_products,
+        'categories': categories
+    })
+
