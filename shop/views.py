@@ -4,6 +4,9 @@ from .models import Category, Product, Cart, CartItem, Rating, Order, OrderItem
 from django.contrib import messages
 from .forms import RegistrationForm, RatingForm, CheckoutForm
 from django.db.models import Q, Min, Max, Avg
+from django.contrib.auth.decorators import login_required
+
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -87,7 +90,6 @@ def product_list(request, category_slug=None):
 
 
 
-
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, available = True)
     related_product = Product.objects.filter(category = product.category).exclude(id=product.id)
@@ -106,4 +108,17 @@ def product_detail(request, slug):
         'related_product' : related_product,
         'user_raing' : user_rating,
         'rating_form' : rating_form
+    })
+
+
+@login_required
+def cart_detail(request):
+    try:
+        cart = Cart.objects.get(user=request.user)
+
+    except Cart.DoesNotExist:
+        cart = Cart.objects.create(user=request.user)
+
+    return render(request, '', {
+        'cart' : cart
     })
