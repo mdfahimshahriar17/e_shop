@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from .models import Category, Product, Cart, CartItem, Rating, Order, OrderItem
 from django.contrib import messages
-from .forms import RegistrationForm
+from .forms import RegistrationForm, RatingForm, CheckoutForm
 from django.db.models import Q, Min, Max, Avg
 def login_view(request):
     if request.method == 'POST':
@@ -83,4 +83,27 @@ def product_list(request, category_slug=None):
         'products' : products,
         'min_price' : min_price,
         'max_price' : max_price
+    })
+
+
+
+
+def product_detail(request, slug):
+    product = get_object_or_404(Product, slug=slug, available = True)
+    related_product = Product.objects.filter(category = product.category).exclude(id=product.id)
+    user_rating = None
+
+    if request.user.is_authenticated:
+        try:
+            user_rating = Rating.objects.get(product=product, user=request.user)
+        except Rating.DoesNotExist:
+            pass
+
+    rating_form = RatingForm(instance=user_rating)
+
+    return render(request, '', {
+        'product' : product,
+        'related_product' : related_product,
+        'user_raing' : user_rating,
+        'rating_form' : rating_form
     })
