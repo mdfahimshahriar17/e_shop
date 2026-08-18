@@ -142,3 +142,13 @@ def cart_add(request, product_id):
 
     messages.success(request, f"{product.name} has been added to your cart!")
     return redirect('')
+
+@login_required
+def cart_remove(request, product_id):
+    cart = get_object_or_404(Cart, user = request.user)
+    product = get_object_or_404(Product, id = product_id)
+    cart_item = get_object_or_404(CartItem, cart = cart, product = product)
+    cart_item.delete()
+    messages.success(request, f"{product.name} has been removed from your cart!")
+
+    return redirect('')
