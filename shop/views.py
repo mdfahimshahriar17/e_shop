@@ -122,3 +122,23 @@ def cart_detail(request):
     return render(request, '', {
         'cart' : cart
     })
+
+
+@login_required
+def cart_add(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    try:
+        cart = Cart.objects.get(user=request.user)
+
+    except Cart.DoesNotExist:
+        cart = Cart.objects.create(user=request.user)
+
+    try:
+        cart_item = CartItem.objects.get(cart=cart, product=product) 
+        cart_item.quantity += 1
+        cart_item.save()
+    except CartItem.DoesNotExist:
+        CartItem.objects.create(cart=cart, product=product, quantity = 1)
+
+    messages.success(request, f"{product.name} has been added to your cart!")
+    return redirect('')
