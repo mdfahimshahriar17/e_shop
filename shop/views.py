@@ -152,3 +152,23 @@ def cart_remove(request, product_id):
     messages.success(request, f"{product.name} has been removed from your cart!")
 
     return redirect('')
+
+
+@login_required
+def cart_update(request, product_id):
+    cart = get_object_or_404(Cart, user = request.user)
+    product = get_object_or_404(Product, id = product_id)
+    cart_item = get_object_or_404(CartItem, cart = cart, product = product)
+
+    quantity = int(request.POST.get('quantity', 1))
+
+    if quantity <= 0:
+        cart_item.delete()
+        messages.success(request, f"{product.name} has been removed from your cart!")
+
+    else:
+        cart.quantity = quantity
+        cart.save()
+        messages.success(request, f"Cart Updated Successfully!")
+
+    return redirect('')
