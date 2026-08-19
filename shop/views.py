@@ -59,7 +59,7 @@ def product_list(request, category_slug=None):
         category = get_object_or_404(Category, slug=category_slug)
         products = products.filter(category=category)
 
-    min_price = products.aggregate(Min('price')) 
+    min_price = products.aggregate(Min('price'))['price__min']
     max_price = products.aggregate(Max('price'))['price__max']
 
     if request.GET.get('min_price'):
