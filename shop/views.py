@@ -5,8 +5,8 @@ from django.contrib import messages
 from .forms import RegistrationForm, RatingForm, CheckoutForm
 from django.db.models import Q, Min, Max, Avg
 from django.contrib.auth.decorators import login_required
-
-
+from .utils import generate_sslcommerz_payment
+from django.views.decorators.csrf import csrf_exempt
 def login_view(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -220,3 +220,20 @@ def checkout(request):
         'form' : form
                       
     })
+
+
+@csrf_exempt
+@login_required
+def payment_process(request):
+    oder_id = request.session.get('order_id')
+    if not oder_id:
+        return redirect('')
+
+    order = get_object_or_404(Order, id=oder_id)
+    payment_data = generate_sslcommerz_payment(order, request)
+
+    if payment_data['status'] == 'SUCCESS':
+        return redirect(payment_data['GatewayPageURL'])
+    else:
+        messages.error(request, 'Payment gateway error. Please try again.')
+        return redirect('')
