@@ -172,3 +172,51 @@ def cart_update(request, product_id):
         messages.success(request, f"Cart Updated Successfully!")
 
     return redirect('')
+
+
+@login_required
+def checkout(request):
+    try:
+        cart = Cart.objects.get(user=request.user)
+        if not cart.items.exists():
+            messages.warning(request, 'Your cart is empty')
+            return redirect('')
+
+    except Cart.DoesNotExist:
+        messages.warning(request, 'Your cart is empty')
+        return redirect('')
+
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.user = request.user
+            order.save()
+
+            for item in cart.items.all():
+                OrderItem.objects.create(
+                    order = order,
+                    product = item.product,
+                    price = item.price,
+                    quantity = item.quantity,
+                )
+            cart.items.all().delete()
+            request.session['order_id'] = order.id
+            return redirect('')
+
+    else:
+        initial_data = {}
+        if request.user.first_name:
+            initial_data['first_name'] = request.user.first_name
+        if request.user.last_name:
+            initial_data['last_name'] = request.user.last_name
+        if request.user.email:
+                    initial_data['email'] = request.user.email
+
+        form = CheckoutForm(initial=initial_data)
+
+    return render(request, '',{
+        'cart' : cart,
+        'form' : form
+                      
+    })
