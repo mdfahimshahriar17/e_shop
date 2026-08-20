@@ -141,7 +141,10 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
-# Default primary key field type
-# https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
+
+SSLCOMMERZ_STORE_ID = 'eshop6a87288457e00'
+SSLCOMMERZ_STORE_PASSWORD = 'eshop6a87288457e00@ssl'
+SSLCOMMERZ_PAYMENT_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/process.php'
+SSLCOMMERZ_VALIDATION_URL = 'https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
