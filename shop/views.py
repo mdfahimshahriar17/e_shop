@@ -5,7 +5,7 @@ from django.contrib import messages
 from .forms import RegistrationForm, RatingForm, CheckoutForm
 from django.db.models import Q, Min, Max, Avg
 from django.contrib.auth.decorators import login_required
-from .utils import generate_sslcommerz_payment
+from .utils import generate_sslcommerz_payment, send_order_confirmation_email
 from django.views.decorators.csrf import csrf_exempt
 def login_view(request):
     if request.method == 'POST':
@@ -237,3 +237,47 @@ def payment_process(request):
     else:
         messages.error(request, 'Payment gateway error. Please try again.')
         return redirect('')
+
+
+
+@csrf_exempt
+@login_required
+def payment_success(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order.paid = True
+    order.status = 'processing'
+    order.transaction_id = order.id 
+    order.save()
+
+    order_items = order.items.all()
+    for item in order_items:
+        product = item.product
+        product.stock -= item.quantity
+
+        if product.stock < 0:
+            product.stock = 0
+        product.save()
+
+    send_order_confirmation_email(order)
+    messages.success(request, "Payment successful")
+    return redirect('')
+
+@csrf_exempt
+@login_required
+def payment_fail(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order.status = 'canceled'
+    order.save()
+    return redirect('')
+
+
+@csrf_exempt
+@login_required
+def payment_cancel(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    order.status = 'canceled'
+    order.save()
+    return redirect('')
+
+
+    

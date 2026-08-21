@@ -147,4 +147,14 @@ SSLCOMMERZ_STORE_PASSWORD = 'eshop6a87288457e00@ssl'
 SSLCOMMERZ_PAYMENT_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/process.php'
 SSLCOMMERZ_VALIDATION_URL = 'https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php'
 
+
+# email setup
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'fshahriar298@gmail.com'
+EMAIL_HOST_PASSWORD = 'lcxkqhwprljneucl'
+
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
