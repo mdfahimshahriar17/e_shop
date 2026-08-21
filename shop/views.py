@@ -281,3 +281,18 @@ def payment_cancel(request, order_id):
 
 
     
+@login_required
+def profile(request):
+    tab = request.GET.get('tab')
+    orders = Order.objects.filter(user=request.user).order_by('created_at')
+    completed_orders = orders.filter(status='deliverd').count()
+    total_spent = sum(order.get_total_cost for order in orders if order.paid)
+    order_history_active = (tab == 'orders')
+
+    return render(request, '',{
+        'user' : request.user,
+        'orders' : orders,
+        'order_history_active' : order_history_active,
+        'completed_orders' : completed_orders,
+        'total_spent' : total_spent
+    })
