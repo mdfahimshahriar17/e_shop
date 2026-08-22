@@ -150,8 +150,8 @@ LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
 #SSLCOMMERZ
-SSLCOMMERZ_STORE_ID = 'eshop6a87288457e00'
-SSLCOMMERZ_STORE_PASSWORD = 'eshop6a87288457e00@ssl'
+SSLCOMMERZ_STORE_ID = 'XXXXXXXXXXXX'
+SSLCOMMERZ_STORE_PASSWORD = 'XXXXXXXXXXXXXXXXXXX'
 SSLCOMMERZ_PAYMENT_URL = 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php'
 SSLCOMMERZ_VALIDATION_URL = 'https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php'
 
@@ -161,8 +161,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'fshahriar298@gmail.com'
-EMAIL_HOST_PASSWORD = 'lcxkqhwprljneucl'
+EMAIL_HOST_USER = 'email@gmail.com'
+EMAIL_HOST_PASSWORD = 'XXXXXXXXXXXX'
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
