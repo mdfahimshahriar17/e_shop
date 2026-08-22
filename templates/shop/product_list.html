@@ -1,0 +1,913 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if category %}
+        {{ category.name }} | Shopie
+    {% else %}
+        Shop | Shopie
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-4">
+
+    <!-- ==================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            {% if category %}
+
+                <h1 class="h3 fw-bold mb-1">
+                    {{ category.name }}
+                </h1>
+
+                <p class="text-secondary mb-0 small">
+                    {{ category.description }}
+                </p>
+
+            {% else %}
+
+                <h1 class="h3 fw-bold mb-1">
+                    All Products
+                </h1>
+
+                <p class="text-secondary mb-0">
+                    Discover our latest products
+                </p>
+
+            {% endif %}
+
+        </div>
+
+        <span class="badge text-bg-light border">
+            {{ products|length }} Products
+        </span>
+
+    </div>
+
+
+    <div class="row g-4">
+
+
+        <!-- ==================================================
+             FILTER SIDEBAR - DESKTOP
+        ================================================== -->
+
+        <aside class="col-lg-3 d-none d-lg-block">
+
+            <div class="card border-0 shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+
+                        <h5 class="fw-bold mb-0">
+                            Filters
+                        </h5>
+
+                        <a
+                            href="{% url 'shop:product_list' %}"
+                            class="small text-danger"
+                        >
+                            Clear
+                        </a>
+
+                    </div>
+
+
+                    <!-- Categories -->
+
+                    <h6 class="fw-bold mb-3">
+                        Categories
+                    </h6>
+
+                    <div class="list-group list-group-flush mb-4">
+
+                        <a
+                            href="{% url 'shop:product_list' %}"
+                            class="list-group-item list-group-item-action px-0
+                            {% if not category %}text-danger fw-semibold{% endif %}"
+                        >
+                            All Products
+                        </a>
+
+                        {% for cat in categories %}
+
+                            <a
+                                href="{% url 'shop:product_list_by_category' cat.slug %}"
+                                class="list-group-item list-group-item-action px-0
+                                {% if category.id == cat.id %}
+                                    text-danger fw-semibold
+                                {% endif %}"
+                            >
+                                {{ cat.name }}
+                            </a>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- Price -->
+
+                    <h6 class="fw-bold mb-3">
+                        Price Range
+                    </h6>
+
+                    <form
+                        method="GET"
+                        action=""
+                    >
+
+                        {% if request.GET.search %}
+                            <input
+                                type="hidden"
+                                name="search"
+                                value="{{ request.GET.search }}"
+                            >
+                        {% endif %}
+
+                        {% if request.GET.rating %}
+                            <input
+                                type="hidden"
+                                name="rating"
+                                value="{{ request.GET.rating }}"
+                            >
+                        {% endif %}
+
+
+                        <div class="row g-2 mb-3">
+
+                            <div class="col-6">
+
+                                <label class="form-label small text-secondary">
+                                    Min
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="min_price"
+                                    class="form-control form-control-sm"
+                                    placeholder="{{ min_price|default:'0' }}"
+                                    value="{{ request.GET.min_price }}"
+                                >
+
+                            </div>
+
+                            <div class="col-6">
+
+                                <label class="form-label small text-secondary">
+                                    Max
+                                </label>
+
+                                <input
+                                    type="number"
+                                    name="max_price"
+                                    class="form-control form-control-sm"
+                                    placeholder="{{ max_price|default:'0' }}"
+                                    value="{{ request.GET.max_price }}"
+                                >
+
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="btn btn-dark btn-sm w-100"
+                        >
+                            Apply Price
+                        </button>
+
+                    </form>
+
+
+                    <hr class="my-4">
+
+
+                    <!-- Rating -->
+
+                    <h6 class="fw-bold mb-3">
+                        Customer Rating
+                    </h6>
+
+                    <form method="GET">
+
+                        {% if request.GET.search %}
+                            <input
+                                type="hidden"
+                                name="search"
+                                value="{{ request.GET.search }}"
+                            >
+                        {% endif %}
+
+                        {% if request.GET.min_price %}
+                            <input
+                                type="hidden"
+                                name="min_price"
+                                value="{{ request.GET.min_price }}"
+                            >
+                        {% endif %}
+
+                        {% if request.GET.max_price %}
+                            <input
+                                type="hidden"
+                                name="max_price"
+                                value="{{ request.GET.max_price }}"
+                            >
+                        {% endif %}
+
+
+                        <div class="form-check mb-2">
+
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                name="rating"
+                                value="4"
+                                id="rating4"
+                                {% if request.GET.rating == '4' %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="rating4"
+                            >
+                                <span class="text-warning">
+                                    ★★★★
+                                </span>
+                                & up
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check mb-2">
+
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                name="rating"
+                                value="3"
+                                id="rating3"
+                                {% if request.GET.rating == '3' %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="rating3"
+                            >
+                                <span class="text-warning">
+                                    ★★★
+                                </span>
+                                & up
+                            </label>
+
+                        </div>
+
+
+                        <div class="form-check">
+
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                name="rating"
+                                value="2"
+                                id="rating2"
+                                {% if request.GET.rating == '2' %}
+                                    checked
+                                {% endif %}
+                            >
+
+                            <label
+                                class="form-check-label"
+                                for="rating2"
+                            >
+                                <span class="text-warning">
+                                    ★★
+                                </span>
+                                & up
+                            </label>
+
+                        </div>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-outline-dark btn-sm w-100 mt-3"
+                        >
+                            Apply Rating
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </aside>
+
+
+        <!-- ==================================================
+             PRODUCTS AREA
+        ================================================== -->
+
+        <main class="col-lg-9">
+
+
+            <!-- Search + Filter -->
+
+            <div class="d-flex flex-column flex-md-row
+                        justify-content-between align-items-md-center
+                        gap-3 mb-4">
+
+
+                <!-- Search -->
+
+                <form
+                    action=""
+                    method="GET"
+                    class="flex-grow-1"
+                >
+
+                    {% if request.GET.min_price %}
+                        <input
+                            type="hidden"
+                            name="min_price"
+                            value="{{ request.GET.min_price }}"
+                        >
+                    {% endif %}
+
+                    {% if request.GET.max_price %}
+                        <input
+                            type="hidden"
+                            name="max_price"
+                            value="{{ request.GET.max_price }}"
+                        >
+                    {% endif %}
+
+                    {% if request.GET.rating %}
+                        <input
+                            type="hidden"
+                            name="rating"
+                            value="{{ request.GET.rating }}"
+                        >
+                    {% endif %}
+
+
+                    <div class="input-group">
+
+                        <input
+                            type="search"
+                            name="search"
+                            class="form-control"
+                            placeholder="Search products..."
+                            value="{{ request.GET.search|default:'' }}"
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-shopie"
+                        >
+                            <i class="bi bi-search"></i>
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <!-- Mobile Filter Button -->
+
+                <button
+                    class="btn btn-outline-dark d-lg-none"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#filterOffcanvas"
+                >
+
+                    <i class="bi bi-sliders me-1"></i>
+
+                    Filters
+
+                </button>
+
+            </div>
+
+
+            <!-- Active Filters -->
+
+            {% if request.GET.search or request.GET.min_price or request.GET.max_price or request.GET.rating %}
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+
+                    <span class="small fw-semibold">
+                        Active filters:
+                    </span>
+
+
+                    {% if request.GET.search %}
+
+                        <span class="badge rounded-pill text-bg-light border">
+
+                            Search:
+                            {{ request.GET.search }}
+
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if request.GET.min_price %}
+
+                        <span class="badge rounded-pill text-bg-light border">
+
+                            Min:
+                            ${{ request.GET.min_price }}
+
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if request.GET.max_price %}
+
+                        <span class="badge rounded-pill text-bg-light border">
+
+                            Max:
+                            ${{ request.GET.max_price }}
+
+                        </span>
+
+                    {% endif %}
+
+
+                    {% if request.GET.rating %}
+
+                        <span class="badge rounded-pill text-bg-light border">
+
+                            {{ request.GET.rating }}★ & up
+
+                        </span>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- ==================================================
+                 PRODUCT GRID
+            ================================================== -->
+
+            <div class="row row-cols-2 row-cols-md-3 g-3 g-md-4">
+
+                {% for product in products %}
+
+                    <div class="col">
+
+                        <div class="card h-100 border shadow-sm">
+
+
+                            <!-- Product Image -->
+
+                            <div class="position-relative bg-light">
+
+                                <a
+                                    href="{% url 'shop:product_detail' product.slug %}"
+                                >
+
+                                    {% if product.image %}
+
+                                        <img
+                                            src="{{ product.image.url }}"
+                                            class="card-img-top p-2 p-md-3"
+                                            alt="{{ product.name }}"
+                                            style="
+                                                height: 210px;
+                                                object-fit: contain;
+                                            "
+                                        >
+
+                                    {% else %}
+
+                                        <div
+                                            class="d-flex align-items-center
+                                                   justify-content-center"
+                                            style="height: 210px;"
+                                        >
+
+                                            <i
+                                                class="bi bi-image
+                                                       fs-1 text-secondary"
+                                            ></i>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </a>
+
+
+                                {% if product.stock <= 0 %}
+
+                                    <span
+                                        class="badge bg-danger
+                                               position-absolute top-0 start-0 m-2"
+                                    >
+                                        Out of Stock
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="badge bg-shopie
+                                               position-absolute top-0 start-0 m-2"
+                                    >
+                                        Available
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- Product Info -->
+
+                            <div class="card-body d-flex flex-column">
+
+                                <small class="text-secondary">
+                                    {{ product.category.name }}
+                                </small>
+
+
+                                <h5 class="card-title fs-6 fw-semibold mt-1">
+
+                                    <a
+                                        href="{% url 'shop:product_detail' product.slug %}"
+                                        class="text-dark"
+                                    >
+                                        {{ product.name }}
+                                    </a>
+
+                                </h5>
+
+
+                                <!-- Rating -->
+
+                                <div class="mb-2">
+
+                                    <span class="text-warning">
+
+                                        {% with rating=product.avarage_rating %}
+
+                                            {% if rating >= 1 %}★{% else %}☆{% endif %}
+                                            {% if rating >= 2 %}★{% else %}☆{% endif %}
+                                            {% if rating >= 3 %}★{% else %}☆{% endif %}
+                                            {% if rating >= 4 %}★{% else %}☆{% endif %}
+                                            {% if rating >= 5 %}★{% else %}☆{% endif %}
+
+                                        {% endwith %}
+
+                                    </span>
+
+                                    <small class="text-secondary">
+                                        ({{ product.ratings.count }})
+                                    </small>
+
+                                </div>
+
+
+                                <!-- Price -->
+
+                                <div
+                                    class="d-flex justify-content-between
+                                           align-items-center mt-auto"
+                                >
+
+                                    <span class="fw-bold text-shopie">
+                                        ${{ product.price }}
+                                    </span>
+
+
+                                    {% if product.stock > 0 %}
+
+                                        {% if user.is_authenticated %}
+
+                                            <a
+                                                href="{% url 'shop:cart_add' product.id %}"
+                                                class="btn btn-outline-secondary btn-sm"
+                                            >
+
+                                                <i class="bi bi-cart-plus"></i>
+
+                                                <span class="d-none d-md-inline">
+                                                    Add
+                                                </span>
+
+                                            </a>
+
+                                        {% else %}
+
+                                            <a
+                                                href="{% url 'shop:login' %}"
+                                                class="btn btn-outline-secondary btn-sm"
+                                            >
+
+                                                <i class="bi bi-cart-plus"></i>
+
+                                                <span class="d-none d-md-inline">
+                                                    Add
+                                                </span>
+
+                                            </a>
+
+                                        {% endif %}
+
+                                    {% else %}
+
+                                        <button
+                                            class="btn btn-outline-secondary btn-sm"
+                                            disabled
+                                        >
+                                            Sold Out
+                                        </button>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% empty %}
+
+                    <!-- Empty State -->
+
+                    <div class="col-12">
+
+                        <div class="text-center py-5">
+
+                            <i
+                                class="bi bi-search
+                                       display-4 text-secondary"
+                            ></i>
+
+                            <h4 class="fw-bold mt-3">
+                                No products found
+                            </h4>
+
+                            <p class="text-secondary">
+                                Try changing your search or filters.
+                            </p>
+
+                            <a
+                                href="{% url 'shop:product_list' %}"
+                                class="btn btn-shopie"
+                            >
+                                View All Products
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+        </main>
+
+    </div>
+
+</div>
+
+
+<!-- ==================================================
+     MOBILE FILTER OFFCANVAS
+================================================== -->
+
+<div
+    class="offcanvas offcanvas-start"
+    tabindex="-1"
+    id="filterOffcanvas"
+>
+
+    <div class="offcanvas-header border-bottom">
+
+        <h5 class="offcanvas-title fw-bold">
+            Filters
+        </h5>
+
+        <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="offcanvas"
+        ></button>
+
+    </div>
+
+
+    <div class="offcanvas-body">
+
+        <!-- Categories -->
+
+        <h6 class="fw-bold mb-3">
+            Categories
+        </h6>
+
+        <div class="list-group mb-4">
+
+            <a
+                href="{% url 'shop:product_list' %}"
+                class="list-group-item list-group-item-action
+                {% if not category %}text-danger fw-semibold{% endif %}"
+            >
+                All Products
+            </a>
+
+            {% for cat in categories %}
+
+                <a
+                    href="{% url 'shop:product_list_by_category' cat.slug %}"
+                    class="list-group-item list-group-item-action
+                    {% if category.id == cat.id %}
+                        text-danger fw-semibold
+                    {% endif %}"
+                >
+                    {{ cat.name }}
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- Price -->
+
+        <h6 class="fw-bold mb-3">
+            Price Range
+        </h6>
+
+        <form method="GET">
+
+            {% if request.GET.search %}
+
+                <input
+                    type="hidden"
+                    name="search"
+                    value="{{ request.GET.search }}"
+                >
+
+            {% endif %}
+
+
+            <div class="row g-2">
+
+                <div class="col-6">
+
+                    <label class="form-label small">
+                        Min Price
+                    </label>
+
+                    <input
+                        type="number"
+                        name="min_price"
+                        class="form-control"
+                        value="{{ request.GET.min_price }}"
+                    >
+
+                </div>
+
+
+                <div class="col-6">
+
+                    <label class="form-label small">
+                        Max Price
+                    </label>
+
+                    <input
+                        type="number"
+                        name="max_price"
+                        class="form-control"
+                        value="{{ request.GET.max_price }}"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- Rating -->
+
+            <h6 class="fw-bold mt-4 mb-3">
+                Rating
+            </h6>
+
+            <div class="form-check mb-2">
+
+                <input
+                    class="form-check-input"
+                    type="radio"
+                    name="rating"
+                    value="4"
+                    id="mobileRating4"
+                >
+
+                <label
+                    class="form-check-label"
+                    for="mobileRating4"
+                >
+
+                    <span class="text-warning">
+                        ★★★★
+                    </span>
+
+                    & up
+
+                </label>
+
+            </div>
+
+
+            <div class="form-check mb-2">
+
+                <input
+                    class="form-check-input"
+                    type="radio"
+                    name="rating"
+                    value="3"
+                    id="mobileRating3"
+                >
+
+                <label
+                    class="form-check-label"
+                    for="mobileRating3"
+                >
+
+                    <span class="text-warning">
+                        ★★★
+                    </span>
+
+                    & up
+
+                </label>
+
+            </div>
+
+
+            <div class="form-check">
+
+                <input
+                    class="form-check-input"
+                    type="radio"
+                    name="rating"
+                    value="2"
+                    id="mobileRating2"
+                >
+
+                <label
+                    class="form-check-label"
+                    for="mobileRating2"
+                >
+
+                    <span class="text-warning">
+                        ★★
+                    </span>
+
+                    & up
+
+                </label>
+
+            </div>
+
+
+            <button
+                type="submit"
+                class="btn btn-shopie w-100 mt-4"
+            >
+                Apply Filters
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

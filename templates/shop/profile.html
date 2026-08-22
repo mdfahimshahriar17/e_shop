@@ -1,0 +1,1186 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+    .profile-page {
+        padding: 45px 0 70px;
+    }
+
+    .profile-title {
+        margin-bottom: 5px;
+        font-weight: 700;
+    }
+
+    .profile-subtitle {
+        color: #6c757d;
+        margin-bottom: 30px;
+    }
+
+    .account-card,
+    .stat-card,
+    .orders-card,
+    .overview-card {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .account-card {
+        padding: 28px 22px;
+    }
+
+    .avatar {
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        background: #ff4d55;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0 auto 15px;
+    }
+
+    .account-name {
+        text-align: center;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .account-username {
+        text-align: center;
+        color: #777;
+        margin-bottom: 25px;
+    }
+
+    .account-menu a {
+        display: block;
+        padding: 11px 8px;
+        color: #333;
+        text-decoration: none;
+        border-radius: 6px;
+        margin-bottom: 5px;
+    }
+
+    .account-menu a:hover,
+    .account-menu a.active {
+        color: #ff4d55;
+        background: #fff1f2;
+    }
+
+    .stats-row {
+        margin-bottom: 25px;
+    }
+
+    .stat-card {
+        padding: 20px;
+        height: 100%;
+    }
+
+    .stat-label {
+        color: #777;
+        font-size: 14px;
+    }
+
+    .stat-value {
+        font-size: 27px;
+        font-weight: 700;
+        margin-top: 5px;
+    }
+
+    .overview-card {
+        padding: 25px;
+    }
+
+    .overview-title {
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .profile-info-box {
+        background: #fff8f8;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 15px;
+    }
+
+    .profile-info-label {
+        color: #777;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .profile-info-value {
+        font-weight: 600;
+        font-size: 16px;
+    }
+
+    .orders-card {
+        padding: 25px;
+    }
+
+    .orders-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .orders-header h4 {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .order-count {
+        font-weight: 600;
+        color: #ff4d55;
+    }
+
+    .order-row {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 18px;
+        margin-bottom: 12px;
+    }
+
+    .order-label {
+        color: #777;
+        font-size: 13px;
+    }
+
+    .order-value {
+        font-weight: 600;
+        margin-top: 4px;
+    }
+
+    .status-badge,
+    .payment-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .status-badge {
+        background: #e9f7ef;
+        color: #198754;
+    }
+
+    .payment-paid {
+        background: #e9f7ef;
+        color: #198754;
+    }
+
+    .payment-unpaid {
+        background: #fff0f0;
+        color: #dc3545;
+    }
+
+    .btn-view {
+        border: 0;
+        background: #ff4d55;
+        color: #fff;
+        padding: 8px 15px;
+        border-radius: 6px;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .btn-view:hover {
+        color: #fff;
+        background: #e83f47;
+    }
+
+    /* Order Modal */
+
+    .order-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        z-index: 9999;
+        padding: 35px 15px;
+        overflow-y: auto;
+    }
+
+    .order-modal.show {
+        display: block;
+    }
+
+    .modal-box {
+        max-width: 950px;
+        margin: auto;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    }
+
+    .modal-header-custom {
+        background: linear-gradient(90deg, #ff4d55, #ff6970);
+        color: #fff;
+        padding: 16px 22px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header-custom h4 {
+        margin: 0;
+        font-weight: 700;
+    }
+
+    .modal-close {
+        background: transparent;
+        border: 0;
+        color: #fff;
+        font-size: 28px;
+        cursor: pointer;
+    }
+
+    .modal-body-custom {
+        padding: 25px;
+    }
+
+    .detail-box {
+        background: #fff8f8;
+        border-radius: 8px;
+        padding: 18px;
+        height: 100%;
+    }
+
+    .detail-box h5 {
+        margin-bottom: 12px;
+        font-weight: 700;
+    }
+
+    .detail-box p {
+        margin-bottom: 6px;
+    }
+
+    .items-title {
+        margin: 25px 0 12px;
+        font-weight: 700;
+    }
+
+    .items-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .items-table th,
+    .items-table td {
+        border: 1px solid #ddd;
+        padding: 11px;
+        vertical-align: middle;
+    }
+
+    .items-table th {
+        background: #fafafa;
+    }
+
+    .product-img {
+        width: 55px;
+        height: 55px;
+        object-fit: cover;
+        border-radius: 6px;
+        margin-right: 10px;
+    }
+
+    .product-cell {
+        display: flex;
+        align-items: center;
+    }
+
+    .btn-small {
+        display: inline-block;
+        padding: 6px 10px;
+        border: 1px solid #aaa;
+        border-radius: 5px;
+        text-decoration: none;
+        color: #444;
+        font-size: 13px;
+        margin-right: 4px;
+    }
+
+    .btn-small:hover {
+        color: #444;
+    }
+
+    .btn-rate {
+        border-color: #ff4d55;
+        color: #ff4d55;
+    }
+
+    .btn-rate:hover {
+        color: #ff4d55;
+    }
+
+    .notes-box {
+        margin-top: 20px;
+        background: #f8f8f8;
+        padding: 18px;
+        border-radius: 8px;
+    }
+
+    .modal-footer-custom {
+        padding: 15px 25px 25px;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn-close-modal {
+        border: 1px solid #777;
+        background: #fff;
+        color: #555;
+        padding: 8px 18px;
+        border-radius: 6px;
+        cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+
+        .order-row {
+            padding: 14px;
+        }
+
+        .order-row .col-md-2,
+        .order-row .col-md-3 {
+            margin-bottom: 12px;
+        }
+
+        .items-table {
+            min-width: 700px;
+        }
+
+        .table-scroll {
+            overflow-x: auto;
+        }
+    }
+</style>
+
+
+<div class="container profile-page">
+
+    <!-- PAGE TITLE -->
+
+    <h1 class="profile-title">
+        My Account
+    </h1>
+
+    <p class="profile-subtitle">
+        Manage your profile and view your orders.
+    </p>
+
+
+    <div class="row">
+
+        <!-- ==========================================
+             LEFT SIDEBAR
+        =========================================== -->
+
+        <div class="col-lg-3 mb-4">
+
+            <div class="account-card">
+
+                <div class="avatar">
+                    {{ user.first_name|first|default:user.username|first|upper }}
+                </div>
+
+                <div class="account-name">
+                    {{ user.get_full_name|default:user.username }}
+                </div>
+
+                <div class="account-username">
+                    @{{ user.username }}
+                </div>
+
+                <hr>
+
+                <div class="account-menu">
+
+                    <!-- ACCOUNT OVERVIEW -->
+
+                    <a href="{% url 'shop:profile' %}"
+                       class="{% if not order_history_active %}active{% endif %}">
+                        Account Overview
+                    </a>
+
+
+                    <!-- ORDER HISTORY -->
+
+                    <a href="{% url 'shop:profile' %}?tab=orders"
+                       class="{% if order_history_active %}active{% endif %}">
+                        Order History
+                    </a>
+
+
+                    <!-- CART -->
+
+                    <a href="/cart/">
+                        My Cart
+                    </a>
+
+
+                    <!-- LOGOUT -->
+
+                    <a href="{% url 'shop:logout' %}">
+                        Logout
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ==========================================
+             RIGHT SIDE
+        =========================================== -->
+
+        <div class="col-lg-9">
+
+
+            <!-- ==========================================
+                 STATISTICS
+            =========================================== -->
+
+            <div class="row stats-row">
+
+                <div class="col-md-4 mb-3">
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Total Orders
+                        </div>
+
+                        <div class="stat-value">
+                            {{ orders|length }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Completed
+                        </div>
+
+                        <div class="stat-value">
+                            {{ completed_orders }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4 mb-3">
+
+                    <div class="stat-card">
+
+                        <div class="stat-label">
+                            Total Spent
+                        </div>
+
+                        <div class="stat-value">
+                            ${{ total_spent }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==========================================
+                 ACCOUNT OVERVIEW
+            =========================================== -->
+
+            {% if not order_history_active %}
+
+                <div class="overview-card">
+
+                    <h4 class="overview-title">
+                        Account Overview
+                    </h4>
+
+
+                    <div class="row">
+
+                        <!-- FULL NAME -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <div class="profile-info-box">
+
+                                <div class="profile-info-label">
+                                    Full Name
+                                </div>
+
+                                <div class="profile-info-value">
+                                    {{ user.get_full_name|default:user.username }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- USERNAME -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <div class="profile-info-box">
+
+                                <div class="profile-info-label">
+                                    Username
+                                </div>
+
+                                <div class="profile-info-value">
+                                    @{{ user.username }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- EMAIL -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <div class="profile-info-box">
+
+                                <div class="profile-info-label">
+                                    Email
+                                </div>
+
+                                <div class="profile-info-value">
+                                    {{ user.email|default:"Not provided" }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- TOTAL ORDERS -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <div class="profile-info-box">
+
+                                <div class="profile-info-label">
+                                    Total Orders
+                                </div>
+
+                                <div class="profile-info-value">
+                                    {{ orders|length }}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            <!-- ==========================================
+                 ORDER HISTORY
+            =========================================== -->
+
+            {% else %}
+
+                <div class="orders-card">
+
+                    <div class="orders-header">
+
+                        <h4>
+                            Order History
+                        </h4>
+
+                        <span class="order-count">
+                            {{ orders|length }}
+                        </span>
+
+                    </div>
+
+
+                    {% for order in orders %}
+
+                        <div class="order-row">
+
+                            <div class="row align-items-center">
+
+
+                                <!-- ORDER ID -->
+
+                                <div class="col-md-2">
+
+                                    <div class="order-label">
+                                        Order
+                                    </div>
+
+                                    <div class="order-value">
+                                        #{{ order.id }}
+                                    </div>
+
+                                </div>
+
+
+                                <!-- DATE -->
+
+                                <div class="col-md-3">
+
+                                    <div class="order-label">
+                                        Date
+                                    </div>
+
+                                    <div class="order-value">
+                                        {{ order.created_at|date:"M d, Y" }}
+                                    </div>
+
+                                </div>
+
+
+                                <!-- STATUS -->
+
+                                <div class="col-md-2">
+
+                                    <div class="order-label">
+                                        Status
+                                    </div>
+
+                                    <div class="order-value">
+
+                                        <span class="status-badge">
+                                            {{ order.get_status_display }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+
+                                <!-- TOTAL -->
+
+                                <div class="col-md-2">
+
+                                    <div class="order-label">
+                                        Total
+                                    </div>
+
+                                    <div class="order-value">
+                                        ${{ order.get_total_cost }}
+                                    </div>
+
+                                </div>
+
+
+                                <!-- VIEW DETAILS -->
+
+                                <div class="col-md-3 text-md-end">
+
+                                    <button
+                                        type="button"
+                                        class="btn-view"
+                                        onclick="openOrderModal('order-modal-{{ order.id }}')">
+
+                                        View Details
+
+                                    </button>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- ==================================
+                             ORDER DETAILS MODAL
+                        =================================== -->
+
+                        <div
+                            id="order-modal-{{ order.id }}"
+                            class="order-modal">
+
+
+                            <div class="modal-box">
+
+
+                                <!-- MODAL HEADER -->
+
+                                <div class="modal-header-custom">
+
+                                    <h4>
+                                        Order #{{ order.id }} Details
+                                    </h4>
+
+                                    <button
+                                        type="button"
+                                        class="modal-close"
+                                        onclick="closeOrderModal('order-modal-{{ order.id }}')">
+
+                                        &times;
+
+                                    </button>
+
+                                </div>
+
+
+                                <!-- MODAL BODY -->
+
+                                <div class="modal-body-custom">
+
+
+                                    <!-- ORDER SUMMARY -->
+
+                                    <div class="row">
+
+                                        <div class="col-md-3">
+
+                                            <div class="order-label">
+                                                Order Date
+                                            </div>
+
+                                            <strong>
+                                                {{ order.created_at|date:"M d, Y" }}
+                                            </strong>
+
+                                        </div>
+
+
+                                        <div class="col-md-3">
+
+                                            <div class="order-label">
+                                                Status
+                                            </div>
+
+                                            <span class="status-badge">
+                                                {{ order.get_status_display }}
+                                            </span>
+
+                                        </div>
+
+
+                                        <div class="col-md-3">
+
+                                            <div class="order-label">
+                                                Total Amount
+                                            </div>
+
+                                            <strong>
+                                                ${{ order.get_total_cost }}
+                                            </strong>
+
+                                        </div>
+
+
+                                        <div class="col-md-3">
+
+                                            <div class="order-label">
+                                                Payment Status
+                                            </div>
+
+
+                                            {% if order.paid %}
+
+                                                <span class="payment-badge payment-paid">
+                                                    Paid
+                                                </span>
+
+                                            {% else %}
+
+                                                <span class="payment-badge payment-unpaid">
+                                                    Unpaid
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- SHIPPING + CONTACT -->
+
+                                    <div class="row mt-4">
+
+
+                                        <!-- SHIPPING ADDRESS -->
+
+                                        <div class="col-md-6 mb-3">
+
+                                            <div class="detail-box">
+
+                                                <h5>
+                                                    Shipping Address
+                                                </h5>
+
+                                                <p>
+                                                    <strong>
+                                                        {{ order.first_name }}
+                                                        {{ order.last_name }}
+                                                    </strong>
+                                                </p>
+
+                                                <p>
+                                                    {{ order.address }}
+                                                </p>
+
+                                                <p>
+                                                    {{ order.city }},
+                                                    {{ order.postal_code }}
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <!-- CONTACT -->
+
+                                        <div class="col-md-6 mb-3">
+
+                                            <div class="detail-box">
+
+                                                <h5>
+                                                    Contact Information
+                                                </h5>
+
+                                                <p>
+                                                    <strong>
+                                                        Email:
+                                                    </strong>
+
+                                                    {{ order.email }}
+                                                </p>
+
+                                                <p>
+                                                    <strong>
+                                                        Transaction ID:
+                                                    </strong>
+
+                                                    {{ order.transaction_id|default:"N/A" }}
+
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+
+                                    <!-- ORDER ITEMS -->
+
+                                    <h5 class="items-title">
+                                        Order Items
+                                    </h5>
+
+
+                                    <div class="table-scroll">
+
+                                        <table class="items-table">
+
+                                            <thead>
+
+                                                <tr>
+
+                                                    <th>
+                                                        Product
+                                                    </th>
+
+                                                    <th>
+                                                        Price
+                                                    </th>
+
+                                                    <th>
+                                                        Quantity
+                                                    </th>
+
+                                                    <th>
+                                                        Total
+                                                    </th>
+
+                                                    <th>
+                                                        Actions
+                                                    </th>
+
+                                                </tr>
+
+                                            </thead>
+
+
+                                            <tbody>
+
+                                                {% for item in order.items.all %}
+
+                                                    <tr>
+
+
+                                                        <!-- PRODUCT -->
+
+                                                        <td>
+
+                                                            <div class="product-cell">
+
+                                                                {% if item.product.image %}
+
+                                                                    <img
+                                                                        src="{{ item.product.image.url }}"
+                                                                        class="product-img"
+                                                                        alt="{{ item.product.name }}">
+
+                                                                {% endif %}
+
+
+                                                                <div>
+
+                                                                    <strong>
+                                                                        {{ item.product.name }}
+                                                                    </strong>
+
+                                                                    <br>
+
+                                                                    <small>
+                                                                        {{ item.product.category.name }}
+                                                                    </small>
+
+                                                                </div>
+
+                                                            </div>
+
+                                                        </td>
+
+
+                                                        <!-- PRICE -->
+
+                                                        <td>
+                                                            ${{ item.price }}
+                                                        </td>
+
+
+                                                        <!-- QUANTITY -->
+
+                                                        <td>
+                                                            {{ item.quantity }}
+                                                        </td>
+
+
+                                                        <!-- TOTAL -->
+
+                                                        <td>
+                                                            <strong>
+                                                                ${{ item.get_cost }}
+                                                            </strong>
+                                                        </td>
+
+
+                                                        <!-- ACTIONS -->
+
+                                                        <td>
+
+                                                            <a
+                                                                href="{% url 'shop:product_detail' item.product.slug %}"
+                                                                class="btn-small">
+
+                                                                View
+
+                                                            </a>
+
+
+                                                            {% if order.status == 'deliverd' %}
+
+                                                                <a
+                                                                    href="{% url 'shop:rate_product' item.product.id %}"
+                                                                    class="btn-small btn-rate">
+
+                                                                    Rate
+
+                                                                </a>
+
+                                                            {% endif %}
+
+                                                        </td>
+
+                                                    </tr>
+
+                                                {% endfor %}
+
+                                            </tbody>
+
+
+                                            <tfoot>
+
+                                                <tr>
+
+                                                    <th
+                                                        colspan="3"
+                                                        class="text-end">
+
+                                                        Total:
+
+                                                    </th>
+
+                                                    <th>
+
+                                                        ${{ order.get_total_cost }}
+
+                                                    </th>
+
+                                                    <th></th>
+
+                                                </tr>
+
+                                            </tfoot>
+
+                                        </table>
+
+                                    </div>
+
+
+                                    <!-- ORDER NOTES -->
+
+                                    {% if order.note %}
+
+                                        <div class="notes-box">
+
+                                            <h5>
+                                                Order Notes
+                                            </h5>
+
+                                            <p>
+                                                {{ order.note }}
+                                            </p>
+
+                                        </div>
+
+                                    {% endif %}
+
+
+                                </div>
+
+
+                                <!-- MODAL FOOTER -->
+
+                                <div class="modal-footer-custom">
+
+                                    <button
+                                        type="button"
+                                        class="btn-close-modal"
+                                        onclick="closeOrderModal('order-modal-{{ order.id }}')">
+
+                                        Close
+
+                                    </button>
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+
+
+                    {% empty %}
+
+                        <p class="text-center text-muted">
+                            You have no orders yet.
+                        </p>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function openOrderModal(id) {
+
+    const modal = document.getElementById(id);
+
+    if (modal) {
+
+        modal.classList.add('show');
+
+        document.body.style.overflow = 'hidden';
+
+    }
+
+}
+
+
+function closeOrderModal(id) {
+
+    const modal = document.getElementById(id);
+
+    if (modal) {
+
+        modal.classList.remove('show');
+
+        document.body.style.overflow = '';
+
+    }
+
+}
+
+
+document.addEventListener('click', function(event) {
+
+    if (event.target.classList.contains('order-modal')) {
+
+        event.target.classList.remove('show');
+
+        document.body.style.overflow = '';
+
+    }
+
+});
+
+
+document.addEventListener('keydown', function(event) {
+
+    if (event.key === 'Escape') {
+
+        document.querySelectorAll('.order-modal.show').forEach(function(modal) {
+
+            modal.classList.remove('show');
+
+        });
+
+        document.body.style.overflow = '';
+
+    }
+
+});
+
+</script>
+
+{% endblock %}

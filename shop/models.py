@@ -64,7 +64,7 @@ class Cart(models.Model):
     def get_total_price(self):
         return sum(item.get_cost() for item in self.items.all())
 
-    def get_total_item(self):
+    def get_total_items(self):
         return sum(item.quantity for item in self.items.all())
 
 
@@ -97,7 +97,7 @@ class Order(models.Model):
     postal_code = models.CharField(max_length=20)
     city = models.CharField(max_length=100)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
-    note = models.TextField()
+    note = models.TextField(blank=True)
     paid = models.BooleanField(default=False)
     transaction_id = models.CharField(max_length=200, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

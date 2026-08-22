@@ -3,44 +3,270 @@
 
 {% block title %}Login | E-Shop{% endblock %}
 
+
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6 col-lg-5">
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-4">
-                <h1 class="h3 text-center mb-4">Login</h1>
 
-                <form method="post">
-                    {% csrf_token %}
+<div class="container py-5">
 
-                    <div class="mb-3">
-                        <label for="username" class="form-label">Username</label>
-                        <input type="text" class="form-control" id="username" name="username" autocomplete="username" required>
+    <div class="row justify-content-center">
+
+        <div class="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4">
+
+            <div class="card border-0 shadow-sm rounded-4">
+
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Header -->
+
+                    <div class="text-center mb-4">
+
+                        <div
+                            class="bg-shopie text-white rounded-circle
+                                   d-flex align-items-center
+                                   justify-content-center mx-auto mb-3"
+                            style="width: 60px; height: 60px;"
+                        >
+
+                            <i class="bi bi-bag fs-4"></i>
+
+                        </div>
+
+                        <h1 class="h4 fw-bold mb-1">
+                            Welcome Back
+                        </h1>
+
+                        <p class="text-secondary small mb-0">
+                            Login to continue shopping
+                        </p>
+
                     </div>
 
-                    <div class="mb-3">
-                        <label for="password" class="form-label">Password</label>
-                        <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" required>
+
+                    <!-- Normal Login -->
+
+                    <form method="POST">
+
+                        {% csrf_token %}
+
+
+                        <!-- Username -->
+
+                        <div class="mb-3">
+
+                            <label
+                                for="username"
+                                class="form-label fw-semibold"
+                            >
+                                Username
+                            </label>
+
+                            <div class="input-group">
+
+                                <span class="input-group-text bg-white">
+
+                                    <i class="bi bi-person text-secondary"></i>
+
+                                </span>
+
+                                <input
+                                    type="text"
+                                    name="username"
+                                    id="username"
+                                    class="form-control"
+                                    placeholder="Enter your username"
+                                    autocomplete="username"
+                                    required
+                                >
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Password -->
+
+                        <div class="mb-3">
+
+                            <div class="d-flex justify-content-between">
+
+                                <label
+                                    for="password"
+                                    class="form-label fw-semibold"
+                                >
+                                    Password
+                                </label>
+
+                                <a
+                                    href="#"
+                                    class="small text-shopie"
+                                >
+                                    Forgot password?
+                                </a>
+
+                            </div>
+
+
+                            <div class="input-group">
+
+                                <span class="input-group-text bg-white">
+
+                                    <i class="bi bi-lock text-secondary"></i>
+
+                                </span>
+
+                                <input
+                                    type="password"
+                                    name="password"
+                                    id="password"
+                                    class="form-control"
+                                    placeholder="Enter your password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-secondary"
+                                    onclick="togglePassword()"
+                                >
+
+                                    <i
+                                        class="bi bi-eye"
+                                        id="passwordIcon"
+                                    ></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Login -->
+
+                        <button
+                            type="submit"
+                            class="btn btn-shopie btn-lg w-100"
+                        >
+
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+
+                            Login
+
+                        </button>
+
+                    </form>
+
+
+                    <!-- Divider -->
+
+                    <div class="d-flex align-items-center my-4">
+
+                        <hr class="flex-grow-1">
+
+                        <span class="px-3 text-secondary small">
+                            OR
+                        </span>
+
+                        <hr class="flex-grow-1">
+
                     </div>
 
-                    <button type="submit" class="btn btn-dark w-100">Login</button>
-                </form>
 
-                <div class="d-flex align-items-center gap-2 my-4">
-                    <hr class="flex-grow-1">
-                    <span class="text-muted small">OR</span>
-                    <hr class="flex-grow-1">
+                    <!-- Google Login -->
+
+                    <a
+                        href="{% provider_login_url 'google' %}"
+                        class="btn btn-outline-dark btn-lg w-100"
+                    >
+
+                        <i class="bi bi-google me-2"></i>
+
+                        Continue with Google
+
+                    </a>
+
+
+                    <!-- Register -->
+
+                    <div class="text-center mt-4">
+
+                        <p class="text-secondary small mb-2">
+                            Don't have an account?
+                        </p>
+
+                        <a
+                            href="{% url 'account_signup' %}"
+                            class="btn btn-outline-dark w-100"
+                        >
+
+                            <i class="bi bi-person-plus me-2"></i>
+
+                            Create an Account
+
+                        </a>
+
+                    </div>
+
                 </div>
 
-                <a href="{% provider_login_url 'google' %}" class="btn btn-outline-secondary w-100">
-                    Continue with Google
-                </a>
-
-                <p class="text-center mt-3 mb-0">
-                    New here? <a href="{% url 'account_signup' %}">Create an account</a>
-                </p>
             </div>
+
+
+            <div class="text-center mt-3">
+
+                <small class="text-secondary">
+
+                    <i class="bi bi-shield-check me-1"></i>
+
+                    Your information is secure with us.
+
+                </small>
+
+            </div>
+
         </div>
+
     </div>
+
 </div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+    function togglePassword() {
+
+        const passwordInput =
+            document.getElementById("password");
+
+        const passwordIcon =
+            document.getElementById("passwordIcon");
+
+
+        if (passwordInput.type === "password") {
+
+            passwordInput.type = "text";
+
+            passwordIcon.classList.remove("bi-eye");
+
+            passwordIcon.classList.add("bi-eye-slash");
+
+        } else {
+
+            passwordInput.type = "password";
+
+            passwordIcon.classList.remove("bi-eye-slash");
+
+            passwordIcon.classList.add("bi-eye");
+
+        }
+
+    }
+
+</script>
+
 {% endblock %}

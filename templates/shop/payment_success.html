@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Payment Successful | E-Shop{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body p-4 p-md-5">
+
+                    <!-- Success Icon -->
+                    <div class="mb-4">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center"
+                             style="width: 80px; height: 80px;">
+                            <span class="text-success fs-1">✓</span>
+                        </div>
+                    </div>
+
+                    <h1 class="h2 fw-bold mb-3">
+                        Payment Successful!
+                    </h1>
+
+                    <p class="text-muted mb-4">
+                        Thank you for your purchase.
+                        Your order <strong>#{{ order.id }}</strong> has been confirmed.
+                    </p>
+
+                    <!-- Order Information -->
+                    <div class="bg-light rounded p-3 mb-4 text-start">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Order ID</span>
+                            <strong>#{{ order.id }}</strong>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <span class="text-muted">Transaction ID</span>
+                            <strong>{{ order.transaction_id }}</strong>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <span class="text-muted">Total</span>
+                            <strong>৳{{ order.get_total_cost }}</strong>
+                        </div>
+
+                    </div>
+
+                    <p class="small text-muted mb-4">
+                        A confirmation email has been sent to
+                        <strong>{{ order.email }}</strong>.
+                    </p>
+
+                    <!-- Buttons -->
+                    <div class="d-grid gap-2">
+
+                        <a href="{% url 'shop:profile' %}"
+                           class="btn btn-primary">
+                            View Your Orders
+                        </a>
+
+                        <a href="{% url 'shop:home' %}"
+                           class="btn btn-outline-secondary">
+                            Continue Shopping
+                        </a>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

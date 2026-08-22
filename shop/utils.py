@@ -31,13 +31,14 @@ def generate_sslcommerz_payment(order, request):
     settings.SSLCOMMERZ_PAYMENT_URL,
     data=post_data
     )
-
-    return json.loads(response.text)
+    print("STATUS:", response.status_code)
+    print("RESPONSE:", response.text)
+    return response.json()
 
 
 def send_order_confirmation_email(order):
     subject = f"Order Confirmation - Order#{order.id}"
-    message = render_to_string('', {'order' : order})
+    message = render_to_string('shop/email/order_confirmation.html',{'order': order})
     to = order.email
     send_email = EmailMultiAlternatives(subject, '', to={to})
     send_email.attach_alternative(message, "text/html")

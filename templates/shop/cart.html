@@ -1,0 +1,459 @@
+{% extends "base.html" %}
+
+{% block title %}Shopping Cart | Shopie{% endblock %}
+
+
+{% block content %}
+
+<div class="container py-4">
+
+
+    <!-- ==================================================
+         PAGE HEADER
+    ================================================== -->
+
+    <div class="mb-4">
+
+        <h1 class="h3 fw-bold mb-1">
+            Shopping Cart
+        </h1>
+
+        <p class="text-secondary mb-0">
+            Review your items before checkout.
+        </p>
+
+    </div>
+
+
+    {% if cart.items.exists %}
+
+        <div class="row g-4">
+
+
+            <!-- ==================================================
+                 CART ITEMS
+            ================================================== -->
+
+            <div class="col-lg-8">
+
+
+                <!-- Cart Header - Desktop -->
+
+                <div class="card border-0 shadow-sm">
+
+                    <div class="card-header bg-white py-3">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <h5 class="fw-bold mb-0">
+                                Cart Items
+                            </h5>
+
+                            <span class="badge text-bg-light border">
+                                {{ cart.get_total_items }} Items
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="card-body p-0">
+
+
+                        {% for item in cart.items.all %}
+
+                            <div class="p-3 p-md-4 border-bottom">
+
+                                <div class="row align-items-center g-3">
+
+
+                                    <!-- Product Image -->
+
+                                    <div class="col-4 col-sm-3 col-md-2">
+
+                                        <a
+                                            href="{% url 'shop:product_detail' item.product.slug %}"
+                                        >
+
+                                            <div class="bg-light rounded-3">
+
+                                                {% if item.product.image %}
+
+                                                    <img
+                                                        src="{{ item.product.image.url }}"
+                                                        alt="{{ item.product.name }}"
+                                                        class="img-fluid rounded-3 p-2"
+                                                        style="
+                                                            width: 100%;
+                                                            height: 100px;
+                                                            object-fit: contain;
+                                                        "
+                                                    >
+
+                                                {% else %}
+
+                                                    <div
+                                                        class="d-flex
+                                                               align-items-center
+                                                               justify-content-center"
+                                                        style="height: 100px;"
+                                                    >
+
+                                                        <i
+                                                            class="bi bi-image
+                                                                   fs-2
+                                                                   text-secondary"
+                                                        ></i>
+
+                                                    </div>
+
+                                                {% endif %}
+
+                                            </div>
+
+                                        </a>
+
+                                    </div>
+
+
+                                    <!-- Product Information -->
+
+                                    <div class="col-8 col-sm-9 col-md-4">
+
+                                        <small class="text-secondary">
+                                            {{ item.product.category.name }}
+                                        </small>
+
+                                        <h6 class="fw-bold mt-1 mb-1">
+
+                                            <a
+                                                href="{% url 'shop:product_detail' item.product.slug %}"
+                                                class="text-dark"
+                                            >
+                                                {{ item.product.name }}
+                                            </a>
+
+                                        </h6>
+
+                                        <small class="text-secondary">
+                                            ${{ item.product.price }} each
+                                        </small>
+
+                                    </div>
+
+
+                                    <!-- Quantity -->
+
+                                    <div class="col-6 col-md-3">
+
+                                        <form
+                                            method="POST"
+                                            action="{% url 'shop:cart_update' item.product.id %}"
+                                        >
+
+                                            {% csrf_token %}
+
+                                            <label class="form-label small text-secondary">
+                                                Quantity
+                                            </label>
+
+                                            <div class="input-group input-group-sm">
+
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-outline-secondary"
+                                                    onclick="decreaseQuantity(this)"
+                                                >
+                                                    −
+                                                </button>
+
+                                                <input
+                                                    type="number"
+                                                    name="quantity"
+                                                    value="{{ item.quantity }}"
+                                                    min="1"
+                                                    max="{{ item.product.stock }}"
+                                                    class="form-control text-center"
+                                                >
+
+                                                <button
+                                                    type="button"
+                                                    class="btn btn-outline-secondary"
+                                                    onclick="increaseQuantity(this)"
+                                                >
+                                                    +
+                                                </button>
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-dark"
+                                                    title="Update quantity"
+                                                >
+                                                    <i class="bi bi-check"></i>
+                                                </button>
+
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
+
+                                    <!-- Price + Remove -->
+
+                                    <div class="col-6 col-md-3 text-md-end">
+
+                                        <div class="fw-bold text-shopie mb-2">
+                                            ${{ item.get_cost }}
+                                        </div>
+
+                                        <a
+                                            href="{% url 'shop:cart_remove' item.product.id %}"
+                                            class="btn btn-outline-danger btn-sm"
+                                        >
+
+                                            <i class="bi bi-trash"></i>
+
+                                            <span class="d-none d-sm-inline">
+                                                Remove
+                                            </span>
+
+                                        </a>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+
+                        <!-- Continue Shopping -->
+
+                        <div class="p-3 p-md-4">
+
+                            <a
+                                href="{% url 'shop:product_list' %}"
+                                class="btn btn-outline-dark"
+                            >
+
+                                <i class="bi bi-arrow-left me-2"></i>
+
+                                Continue Shopping
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ==================================================
+                 ORDER SUMMARY
+            ================================================== -->
+
+            <div class="col-lg-4">
+
+                <div
+                    class="card border-0 shadow-sm
+                           position-sticky"
+                    style="top: 20px;"
+                >
+
+                    <div class="card-body p-4">
+
+                        <h5 class="fw-bold mb-4">
+                            Order Summary
+                        </h5>
+
+
+                        <!-- Subtotal -->
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <span class="text-secondary">
+                                Subtotal
+                            </span>
+
+                            <span class="fw-semibold">
+                                ${{ cart.get_total_price }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- Shipping -->
+
+                        <div class="d-flex justify-content-between mb-3">
+
+                            <span class="text-secondary">
+                                Shipping
+                            </span>
+
+                            <span class="text-success fw-semibold">
+                                Free
+                            </span>
+
+                        </div>
+
+
+                        <hr>
+
+
+                        <!-- Total -->
+
+                        <div class="d-flex justify-content-between mb-4">
+
+                            <span class="fw-bold fs-5">
+                                Total
+                            </span>
+
+                            <span class="fw-bold fs-5 text-shopie">
+                                ${{ cart.get_total_price }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- Checkout -->
+
+                        <a
+                            href="{% url 'shop:checkout' %}"
+                            class="btn btn-shopie btn-lg w-100"
+                        >
+
+                            Proceed to Checkout
+
+                            <i class="bi bi-arrow-right ms-2"></i>
+
+                        </a>
+
+
+                        <!-- Payment Info -->
+
+                        <div class="text-center mt-3">
+
+                            <small class="text-secondary">
+
+                                <i class="bi bi-shield-check me-1"></i>
+
+                                Secure checkout
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+    {% else %}
+
+
+        <!-- ==================================================
+             EMPTY CART
+        ================================================== -->
+
+        <div class="row justify-content-center">
+
+            <div class="col-12 col-md-8 col-lg-6">
+
+                <div class="text-center py-5">
+
+                    <div
+                        class="bg-light rounded-circle
+                               d-flex align-items-center
+                               justify-content-center mx-auto"
+                        style="width: 110px; height: 110px;"
+                    >
+
+                        <i
+                            class="bi bi-cart-x display-5
+                                   text-secondary"
+                        ></i>
+
+                    </div>
+
+
+                    <h2 class="h4 fw-bold mt-4">
+                        Your cart is empty
+                    </h2>
+
+
+                    <p class="text-secondary">
+                        Looks like you haven't added anything
+                        to your cart yet.
+                    </p>
+
+
+                    <a
+                        href="{% url 'shop:product_list' %}"
+                        class="btn btn-shopie px-4 mt-2"
+                    >
+
+                        <i class="bi bi-bag me-2"></i>
+
+                        Start Shopping
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script>
+
+    function increaseQuantity(button) {
+
+        const input = button
+            .parentElement
+            .querySelector('input[name="quantity"]');
+
+        const max = parseInt(input.max);
+
+        let value = parseInt(input.value) || 1;
+
+        if (value < max) {
+            input.value = value + 1;
+        }
+    }
+
+
+    function decreaseQuantity(button) {
+
+        const input = button
+            .parentElement
+            .querySelector('input[name="quantity"]');
+
+        let value = parseInt(input.value) || 1;
+
+        if (value > 1) {
+            input.value = value - 1;
+        }
+    }
+
+</script>
+
+{% endblock %}
